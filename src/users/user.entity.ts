@@ -4,11 +4,12 @@ import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity({name: 'users'})
 export class User{
+    //Utilizamos el decorador que estan definidos con un @ al inicio 
     @PrimaryGeneratedColumn()
-    id: number
+    id: number //nombre y tipo
 
-    @Column({unique: true})
-    username: string
+    @Column({unique: true}) //entre paréntesis podemos agregar propiedades únicas 
+    username: string 
     
     @Column()
     password: string

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import {CreateUserDto} from './dto/create-user.dto'
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -16,4 +17,27 @@ export class UsersService {
        const newUser= this.userRepository.create(user) // el user que nos dan se lo asignamos a newUser
        return this.userRepository.save(newUser) // guarda el usuario en el repositorio 
     }
+
+    getUsers(){
+      return this.userRepository.find()// creamos  el método getUsers y usaremos el repositorio que creamos el cual a su vez es un metodo que viene de typeORM, este será de tipo User y simplemente añadimos find para poder encontrarlo en la base de datos
+    }
+
+    getUser(id: number) //Declaramos la función que nos retornara un usuario único en base al id que le demos
+    {
+      return this.userRepository.findOne //Utilizamos findOne para encontrar en base a un dato
+      ( 
+        { where: {
+            id
+         }}
+      );
+   }
+
+   deleteUser(id: number){
+      return  this.userRepository.delete({id})
+   }
+
+   updateUser(id: number, user:UpdateUserDto ){
+     return this.userRepository.update({id}, user)
+   }
+
 }

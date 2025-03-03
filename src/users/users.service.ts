@@ -1,10 +1,11 @@
 //en los services declararemos la lógica de nuestro programa y en los controllers simplemente llamaremos a las funciones.
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import {CreateUserDto} from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto';
+
 
 @Injectable()
 export class UsersService {
@@ -13,31 +14,80 @@ export class UsersService {
     ) {}
  
     //Creamos la función/método createUser para crear a nuestros usuarios que nos retornara el guardado de nuestro nuevo usuario
-    createUser(user: CreateUserDto){ //recibimos la variable user que va a ser tipo CreateUserDto, que es un data transfer object el cual tienen username y password
-       const newUser= this.userRepository.create(user) // el user que nos dan se lo asignamos a newUser
+    async createUser(user: CreateUserDto){ //recibimos la variable user que va a ser tipo CreateUserDto, que es un data transfer object el cual tienen username y password
+   const userFound = await this.userRepository.findOne( //Función para buscar el usuario //Cada vez que se haga una busqueda en la base de datos o un dato que vaya a tardar usamos await para evitar que nos arroje un valor true
+         {
+            where: {
+            username: user.username
+         }
+      })
+
+      if (userFound){
+         return new HttpException ('El usuario ya existe', HttpStatus.CONFLICT)
+      } else{
+         const newUser= this.userRepository.create(user) // el user que nos dan se lo asignamos a newUser
        return this.userRepository.save(newUser) // guarda el usuario en el repositorio 
+      }
+       
     }
 
     getUsers(){
       return this.userRepository.find()// creamos  el método getUsers y usaremos el repositorio que creamos el cual a su vez es un metodo que viene de typeORM, este será de tipo User y simplemente añadimos find para poder encontrarlo en la base de datos
     }
 
-    getUser(id: number) //Declaramos la función que nos retornara un usuario único en base al id que le demos
+    async getUser(id: number) //Declaramos la función que nos retornara un usuario único en base al id que le demos
     {
-      return this.userRepository.findOne //Utilizamos findOne para encontrar en base a un dato
+      const userFound = await this.userRepository.findOne //Utilizamos findOne para encontrar en base a un dato
       ( 
         { where: {
             id
          }}
       );
+
+   
+      if (!userFound){
+         return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+      }
+      return userFound
    }
 
-   deleteUser(id: number){
-      return  this.userRepository.delete({id})
+   async deleteUser(id: number){ //hacemos la función asíncrona
+      
+      const userFound=  await this.userRepository.findOne({where:{id}}); //Utilizamos await para esperar la respuesta y despues continuar 
+
+      if(!userFound){
+         return new HttpException("Usuario inexistente", HttpStatus.NOT_FOUND);
+      }
+      return this.userRepository.delete({id})
+
    }
 
-   updateUser(id: number, user:UpdateUserDto ){
-     return this.userRepository.update({id}, user)
+   /* Otra opción:
+
+    async deleteUser(id: number){ 
+      const resultado = this.userRepository.delete({id})
+      if(resultado === 0){
+         return new HttpException("Usuario inexistente", HttpStatus.NOT_FOUND);
+      }
+      return resultado;
+   }
+   
+   */
+
+   async updateUser(id: number, user:UpdateUserDto ){
+     const resultado = await this.userRepository.findOne(
+      {
+         where:{
+            id
+         }
+      }
+     )
+     if(!resultado){
+      return new HttpException("Usuario inexistente", HttpStatus.NOT_FOUND);
+   }
+   
+   return this.userRepository.update({id}, user)
    }
 
+   
 }

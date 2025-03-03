@@ -1,6 +1,8 @@
 
 //Cada entity que creemos nos generar una tabla en la base de datos que seleccionemos, esto se generara gracias al uso de typeORM que nos permitirá la conexión y creación de tablas en la base de datos.En este caso creamos la tabla del usuario, con la primarykey, username, password, fecha de creacion y autentificación 
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+
+import { Profile } from "./profile.entity"
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm"
 
 @Entity({name: 'users'})
 export class User{
@@ -19,4 +21,8 @@ export class User{
    
     @Column({nullable: true})
     authStrategy: string
+
+    @OneToOne(()=>Profile)
+    @JoinColumn()
+    profile:Profile
 }

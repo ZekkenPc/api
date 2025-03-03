@@ -19,14 +19,13 @@ export class UsersController {
     }
 
     @Get(':id') //Este es un get que nos ayudara a encontrar a un usuario especifico utilizando un parámetro, en este caso utilizando el id
-    getUser( @Param('id', ParseIntPipe)id:number):
-    Promise<User | null> // definimos que pueda ser null debido a que puede ser que no encontremos nada
+    getUser( @Param('id', ParseIntPipe)id:number) // definimos que pueda ser null debido a que puede ser que no encontremos nada
     {
         return this.userService.getUser(id); //llamamos al metodo return el cual le tenemos que pasar el id
     }
 
     @Post() //Declaramos el metodo http que utilizaremos (Post, Delete, Get, Put utilizando el decorador @ )
-    createUser(@Body() newUser: CreateUserDto): Promise<User>
+    createUser(@Body() newUser: CreateUserDto)
     { //
         return this.userService.createUser(newUser);
     }
@@ -37,6 +36,7 @@ export class UsersController {
         return  this.userService.deleteUser(id); //Llamamos al servicio de usuario usamos el metodo delete, dándole el id del dato que eliminara
    }
 
+   
    @Patch(':id')
    updateUser(@Param('id', ParseIntPipe) id: number, @Body() user: UpdateUserDto){ 
     return this.userService.updateUser(id, user);

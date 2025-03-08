@@ -5,6 +5,7 @@ import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import {CreateUserDto} from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -18,14 +19,15 @@ export class UsersService {
    const userFound = await this.userRepository.findOne( //Función para buscar el usuario //Cada vez que se haga una busqueda en la base de datos o un dato que vaya a tardar usamos await para evitar que nos arroje un valor true
          {
             where: {
-            username: user.username
+            correo: user.correo
          }
       })
 
       if (userFound){
-         return new HttpException ('El usuario ya existe', HttpStatus.CONFLICT)
+         return new HttpException ('El correo ya esta registrado', HttpStatus.CONFLICT)
       } else{
          const newUser= this.userRepository.create(user) // el user que nos dan se lo asignamos a newUser
+         
        return this.userRepository.save(newUser) // guarda el usuario en el repositorio 
       }
        
@@ -89,5 +91,9 @@ export class UsersService {
    return this.userRepository.update({id}, user)
    }
 
+   async login(correo:string){
+      const userFound = this.getUsers()  
+   }
    
+
 }

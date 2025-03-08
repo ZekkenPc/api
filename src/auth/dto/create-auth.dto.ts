@@ -2,7 +2,7 @@ import { Transform } from "class-transformer"
 import { IsEmail, IsString, MinLength } from "class-validator"
 
 //Creamos la clase createUserDto para transferencia de datos usando un DTO lo que un Data Transfer Object 
-export class CreateUserDto {
+export class CreateAuthDto {
     @IsString()
     @Transform(({value})=>value.trim())
     @MinLength(1)

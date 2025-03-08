@@ -24,7 +24,7 @@ export class UsersController {
         return this.userService.getUser(id); //llamamos al metodo return el cual le tenemos que pasar el id
     }
 
-    @Post() //Declaramos el metodo http que utilizaremos (Post, Delete, Get, Put utilizando el decorador @ )
+    @Post() //Declaramos el metodo http que utilizarem os (Post, Delete, Get, Put utilizando el decorador @ )
     createUser(@Body() newUser: CreateUserDto)
     { //
         return this.userService.createUser(newUser);
